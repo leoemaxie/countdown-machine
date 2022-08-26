@@ -3,20 +3,20 @@
 const getElem = id => document.getElementById(id);
 
 let handlePlay = getElem('start_stop'),
-  sessionLabel = getElem('session-length'),
-  breakLabel = getElem('break-length'),
-  sessionDecrement = getElem('session-decrement'),
-  sessionIncrement = getElem('session-increment'),
-  reset = getElem('reset'),
-  breakIncrement = getElem('break-increment'),
-  breakDecrement = getElem('break-decrement'),
-  changeBell = getElem('change-bell'),
-  timeLeft = getElem('time-left'),
-  beep = getElem('beep'),
-  timerLabel = getElem('timer-label'),
-  hide = getElem('hide'),
-  sessionValue = Number(sessionLabel.getAttribute('data-value')),
-  breakValue = Number(breakLabel.getAttribute('data-value'));
+    sessionLabel = getElem('session-length'),
+    breakLabel = getElem('break-length'),
+    sessionDecrement = getElem('session-decrement'),
+    sessionIncrement = getElem('session-increment'),
+    reset = getElem('reset'),
+    breakIncrement = getElem('break-increment'),
+    breakDecrement = getElem('break-decrement'),
+    changeBell = getElem('change-bell'),
+    timeLeft = getElem('time-left'),
+    beep = getElem('beep'),
+    timerLabel = getElem('timer-label'),
+    hide = getElem('hide'),
+    sessionValue = Number(sessionLabel.getAttribute('data-value')),
+    breakValue = Number(breakLabel.getAttribute('data-value'));
 
 
 sessionLabel.innerHTML = sessionValue;
@@ -167,7 +167,7 @@ reset.addEventListener('click', function() {
   sessionLabel.innerHTML = sessionValue;
   breakLabel.innerHTML = breakValue;
   removeAll();
-  
+
   handlePlay.removeEventListener('click', tog)
 });
 
