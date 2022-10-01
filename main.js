@@ -3,20 +3,20 @@
 const getElem = id => document.getElementById(id);
 
 let handlePlay = getElem('start_stop'),
-    sessionLabel = getElem('session-length'),
-    breakLabel = getElem('break-length'),
-    sessionDecrement = getElem('session-decrement'),
-    sessionIncrement = getElem('session-increment'),
-    reset = getElem('reset'),
-    breakIncrement = getElem('break-increment'),
-    breakDecrement = getElem('break-decrement'),
-    changeBell = getElem('change-bell'),
-    timeLeft = getElem('time-left'),
-    beep = getElem('beep'),
-    timerLabel = getElem('timer-label'),
-    hide = getElem('hide'),
-    sessionValue = Number(sessionLabel.getAttribute('data-value')),
-    breakValue = Number(breakLabel.getAttribute('data-value'));
+  sessionLabel = getElem('session-length'),
+  breakLabel = getElem('break-length'),
+  sessionDecrement = getElem('session-decrement'),
+  sessionIncrement = getElem('session-increment'),
+  reset = getElem('reset'),
+  breakIncrement = getElem('break-increment'),
+  breakDecrement = getElem('break-decrement'),
+  changeBell = getElem('change-bell'),
+  timeLeft = getElem('time-left'),
+  beep = getElem('beep'),
+  timerLabel = getElem('timer-label'),
+  hide = getElem('hide'),
+  sessionValue = Number(sessionLabel.getAttribute('data-value')),
+  breakValue = Number(breakLabel.getAttribute('data-value'));
 
 
 sessionLabel.innerHTML = sessionValue;
@@ -29,17 +29,14 @@ let toggleVisibility = (elem, add, remove) => {
   if (!toggled) elem.classList.add(remove);
 }
 
-
 function handleSixty(str, timeLeft) {
   let len = str.length;
-
   if (str.lastIndexOf('6') == len - 2) {
     let numStr = parseInt(str.slice(0, 2)) + 1;
     let strAggregate = numStr.toString() + ':' + '00';
     // pads zero to minutes 0-9
     numStr < 10 ? timeLeft.innerHTML = '0' + strAggregate : timeLeft.innerHTML = strAggregate;
   }
-
   else timeLeft.innerHTML = str.slice(0, 2) + ':' + str.slice(2);
 }
 
@@ -56,9 +53,6 @@ function breakTime(timer) {
   }
 }
 
-function handleIncreament(value) {
-
-}
 
 sessionDecrement.addEventListener('click', function() {
   if (sessionValue > 1) {
