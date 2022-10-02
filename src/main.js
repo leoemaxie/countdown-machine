@@ -18,43 +18,117 @@ let handlePlay = getElem('start_stop'),
   sessionValue = Number(sessionLabel.getAttribute('data-value')),
   breakValue = Number(breakLabel.getAttribute('data-value'));
 
+let elems = [breakDecrement, breakIncrement, sessionDecrement, sessionIncrement];
 
 sessionLabel.innerHTML = sessionValue;
 breakLabel.innerHTML = breakValue;
-timeLeft.innerText = "25:00"
 
-
-let toggleVisibility = (elem, add, remove) => {
+let toggleClass = (elem, add, remove) => {
   let toggled = elem.classList.toggle(add);
   if (!toggled) elem.classList.add(remove);
 }
 
-function handleSixty(str, timeLeft) {
-  let len = str.length;
-  if (str.lastIndexOf('6') == len - 2) {
-    let numStr = parseInt(str.slice(0, 2)) + 1;
-    let strAggregate = numStr.toString() + ':' + '00';
-    // pads zero to minutes 0-9
-    numStr < 10 ? timeLeft.innerHTML = '0' + strAggregate : timeLeft.innerHTML = strAggregate;
+function modifyAttr(elem, action) {
+  elem.forEach(x => action(x));
+}
+
+/*** Main Timer Class ***/
+class Timer {
+  constructor() {
+    this.running = false;
+    this.sessionTime = sessionValue * 60;
+    this.breakTime = breakValue * 60;
   }
-  else timeLeft.innerHTML = str.slice(0, 2) + ':' + str.slice(2);
-}
 
+  play() {
+    this.running = true;
+    timerLabel.innerHTML = 'Session Ongoing';
+    timerLabel.style.color = 'seagreen'
+  }
 
-function beepTimer(timer) {
-  if (timer < 5 && timer >= 0) beep.play();
-}
+  pause() {
+    this.running = false;
+    timerLabel.innerHTML = 'Session Paused';
+    timerLabel.style.color = '#F8A145'
+  }
 
+  reset() {
+    this.running = false;
+    this.sessionTime = 1500;
+    this.breakTime = 600;
+    timerLabel.innerHTML = 'Session Reset';
+    timerLabel.style.color = '#F8A145'
+    sessionLabel.innerHTML = "25"
+    breakLabel.innerHTML = "5"
 
-function breakTime(timer) {
-  if (timer == 0) {
-    timerLabel.innerHTML = 'Break Begins';
-    timerLabel.style.color = 'firebrick'
+  }
+
+  runTimer() {
+    setInterval(() => {
+      var mins = Math.floor((this.sessionTime % 3600) / 60);
+      var secs = this.sessionTime % 60;
+      timeLeft.innerText = `${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+
+      if (this.running) {
+        this.sessionTime > 0 ? this.sessionTime -= 1 : "";
+        this.sessionTime == 5 ? beep.play() : "";
+        if (this.sessionTime < 1) {
+          var secs = this.breakTime % 60;
+          var mins = Math.floor((this.breakTime % 3600) / 60);
+          timeLeft.innerText = `${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+          this.breakTime >= 0 ? this.breakTime -= 1 : "";
+          timerLabel.innerHTML = 'Break Begins';
+          timerLabel.style.color = 'firebrick';
+          if (this.breakTime == 0) {
+            timerLabel.innerHTML = 'Timer & Break Elapsed';
+            timerLabel.style.fontStyle = 'italic';
+            timerLabel.style.fontWeight = 'bolder';
+            timerLabel.style.color = '#E31C25';
+          }
+        }
+      }
+    }, 1000)
+  }
+
+  sessionIncrement() {
+    this.sessionTime <= 3600 ? this.sessionTime += 60 : timeLeft.innerText = "60:00"
+  }
+  
+  sessionDecrement() {
+    this.sessionTime > 0 ?
+      this.sessionTime -= 60 : "";
+  }
+
+  breakIncrement() {
+    this.breakTime <= 3600 ? this.breakTime += 60 : "";
+  }
+  
+  breakDecrement() {
+    this.breakTime > 0 ?
+      this.sessionTime -= 60 : "";
   }
 }
 
+let timer = new Timer();
+
+document.addEventListener('DOMContentLoaded', function() {
+  timer.runTimer();
+});
+
+handlePlay.addEventListener('click', function() {
+  toggleClass(this, 'fa-play', 'fa-pause');
+  modifyAttr(elems, s => s.setAttribute("disabled", false));
+  this.classList.contains('fa-play') ? timer.pause() : timer.play();
+});
+
+reset.addEventListener('click', function() {
+  timer.reset();
+  handlePlay.classList.add("fa-play");
+  modifyAttr(elems, r => r.removeAttribute("disabled"));
+});
 
 sessionDecrement.addEventListener('click', function() {
+  timer.sessionDecrement();
   if (sessionValue > 1) {
     let decrementValue = sessionValue -= 1;
     sessionLabel.innerHTML = decrementValue;
@@ -62,10 +136,10 @@ sessionDecrement.addEventListener('click', function() {
     if (decrementValue < 10) hide.style.display = 'inline';
   }
   else sessionLabel;
-})
-
+});
 
 sessionIncrement.addEventListener('click', function() {
+  timer.sessionIncrement()
   if (sessionValue >= 0 && sessionValue < 60) {
     let incrementValue = sessionValue += 1;
     sessionLabel.innerHTML = incrementValue;
@@ -75,128 +149,16 @@ sessionIncrement.addEventListener('click', function() {
   } else sessionLabel;
 })
 
-
 breakDecrement.addEventListener('click', function() {
+  timer.breakDecrement()
   breakValue > 1 ? breakLabel.innerHTML = breakValue -= 1 : breakValue;
 });
 
-
 breakIncrement.addEventListener('click', function() {
+  timer.breakIncrement()
   breakValue > 0 && breakValue < 60 ? breakLabel.innerHTML = breakValue += 1 : breakValue;
 });
 
-
-function setOrRemove(elem, remove) {
-  remove ? elem.removeAttribute('disabled') : elem.setAttribute('disabled', false)
-}
-
-
-function setAll() {
-  setOrRemove(breakDecrement);
-  setOrRemove(breakIncrement);
-  setOrRemove(sessionDecrement);
-  setOrRemove(sessionIncrement);
-}
-
-
-function removeAll() {
-  setOrRemove(breakDecrement, 'disabled');
-  setOrRemove(breakIncrement, 'disabled');
-  setOrRemove(sessionDecrement, 'disabled');
-  setOrRemove(sessionIncrement, 'disabled');
-}
-
-
-let timeInterval = (timer, breaker) => {
-  setInterval(() => {
-      timer -= 6;
-      if (parseInt(timer) % 100 == 0 && timer !== 0) timer = parseInt(timer) - 40;
-      //pads zeros to digits less than 4 places
-      if (timer < 1000) timer = '0' + timer;
-      if (timer < 100) timer = '0' + timer;
-      if (timer < 10) timer = '0' + timer;
-
-      if (timer >= 0) {
-        let formattedStr = timer.toString();
-        handleSixty(formattedStr, timeLeft);
-      }
-
-      let parseBreak = parseInt(breaker);
-      if (isNaN(timer) && breaker > 1 || timer <= 0 && breaker > 1) {
-        breaker -= 10;
-        if (parseBreak % 100 == 0 && timer !== 0) breaker = parseBreak - 40;
-
-        if (breaker < 1000) breaker = '0' + breaker;
-        if (breaker < 100) breaker = '0' + breaker;
-        if (breaker < 10) breaker = '0' + breaker;
-
-        if (breaker <= 0) {
-          timerLabel.innerHTML = 'Timer & Break Elapsed';
-          timerLabel.style.fontStyle = 'italic';
-          timerLabel.style.fontWeight = 'bolder';
-          timerLabel.style.color = '#E31C25'
-        }
-        let formattedStr = breaker.toString();
-        handleSixty(formattedStr, timeLeft);
-      }
-
-      beepTimer(timer);
-      breakTime(timer);
-    },
-    1000)
-}
-
-
-function stopInterval(th) {
-  clearInterval(th)
-}
-
-reset.addEventListener('click', function() {
-  sessionValue = 25;
-  breakValue = 5;
-  sessionLabel.innerHTML = sessionValue;
-  breakLabel.innerHTML = breakValue;
-  removeAll();
-
- // handlePlay.removeEventListener('click', tog)
-});
-
-
 changeBell.addEventListener('click', function() {
-  toggleVisibility(changeBell, 'fa-bell-slash', 'fa-bell');
-});
-
-handlePlay.addEventListener('click', function tog() {
-  let timer = sessionValue * 100;
-  let breaker = breakValue * 100;
-  let time = 0;
-  let classToggled = handlePlay.getAttribute('class');
-
-  toggleVisibility(handlePlay, 'fa-play', 'fa-pause');
-  setAll();
-
-  if (classToggled.includes('fa-play')) {
-    timerLabel.innerHTML = 'Session Ongoing';
-    timerLabel.style.color = 'seagreen'
-    timer -= 40;
-    breaker -= 40;
-    timeInterval(timer, breaker)
-  }
-
-  else if (!classToggled.includes("fa-play")) {
-    timerLabel.innerHTML = 'Session Paused';
-    timerLabel.style.color = '#F8A145';
-    timeLeft.innerHTML = '25:00'
-    /*setInterval(() => {
-      timer = timer += 40
-    }, 1000)
-    /*  stopInterval()
-      setInterval(() => {
-          time += 1000;
-          console.log(time)
-          let pause = setTimeout(() => {
-              timeInterval()
-          }, 5000)
-      }, 1000);*/
-  }
+  toggleClass(this, 'fa-bell-slash', 'fa-bell');
 });

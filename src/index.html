@@ -6,23 +6,24 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <script src="https://kit.fontawesome.com/c1f09f7a05.js" crossorigin="anonymous"></script>
   <link href="https://fonts.googleapis.com/css2?family=Alice&family=Righteous&family=Share+Tech+Mono&family=Fira+Code&family=Eczar&family=Josefin+Slab&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 
   <title>Countdown Machine</title>
 
-  <script src="https://kit.fontawesome.com/c1f09f7a05.js" crossorigin="anonymous"></script>
 </head>
-
+  <<script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js">
+    </script>
 <body>
   <h1>25 + 5 Clock</h1>
   <div class="all">
     <h3 id="timer-label">Begin Session</h3>
     
     <div class="timer-circle">
-      <span id="time-left" data-value="25:00">60:00</span>
+      <span id="time-left" data-value="25"></span>
     </div>
-
+    
     <h2><span id="session-label">Session:</span><strong id="hide">0</strong><span id="session-length" data-value="25"></span><span>00</span></h2>
     <span class="small">m</span><span class="small">s</span>
     <p><span id="break-label">Break: </span><span id="break-length" data-value="5"></span> mins</p>
@@ -49,12 +50,10 @@
         <button class="rectangle join" id="break-increment"><i class="fa-solid fa-arrow-up"></i></button>
         <button class="rectangle" id="break-decrement"><i class="fa-solid fa-arrow-down"></i></button>
       </div>
-      
     </div>
   </div>
-
+  
   <footer>Designed By: LEO emaXie</footer>
-
   <script src="main.js"></script>
 </body>
 
