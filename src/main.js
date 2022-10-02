@@ -57,12 +57,8 @@ function breakTime(timer) {
 sessionDecrement.addEventListener('click', function() {
   if (sessionValue > 1) {
     let decrementValue = sessionValue -= 1;
-    sessionLabel.innerHTML = decrementValue
-
-    /**
-     *displays zeros to single digits
-     */
-
+    sessionLabel.innerHTML = decrementValue;
+    //displays zeros to single digits
     if (decrementValue < 10) hide.style.display = 'inline';
   }
   else sessionLabel;
@@ -149,7 +145,7 @@ let timeInterval = (timer, breaker) => {
     },
     1000)
 }
-let times = [true]
+
 
 function stopInterval(th) {
   clearInterval(th)
@@ -162,7 +158,7 @@ reset.addEventListener('click', function() {
   breakLabel.innerHTML = breakValue;
   removeAll();
 
-  handlePlay.removeEventListener('click', tog)
+ // handlePlay.removeEventListener('click', tog)
 });
 
 

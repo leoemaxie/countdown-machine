@@ -5,21 +5,20 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <<script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js">
-    </script>
 
-    <title>HTML</title>
+  <link href="https://fonts.googleapis.com/css2?family=Alice&family=Righteous&family=Share+Tech+Mono&family=Fira+Code&family=Eczar&family=Josefin+Slab&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 
-    <script src="https://kit.fontawesome.com/c1f09f7a05.js" crossorigin="anonymous"></script>
+  <title>Countdown Machine</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Alice&family=Righteous&family=Share+Tech+Mono&family=Fira+Code&family=Eczar&family=Josefin+Slab&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/c1f09f7a05.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
   <h1>25 + 5 Clock</h1>
   <div class="all">
-    <h3 id="timer-label">Session Paused</h3>
+    <h3 id="timer-label">Begin Session</h3>
+    
     <div class="timer-circle">
       <span id="time-left" data-value="25:00">60:00</span>
     </div>
@@ -30,45 +29,33 @@
 
     <div class="flex">
       <div class="right">
-        <button class="rectangle join" id="session-increment">
-          <i class="fa-solid fa-arrow-up"></i>
-        </button>
-        <button class="rectangle" id="session-decrement">
-          <i class="fa-solid fa-arrow-down"></i>
-        </button>
+        <button class="rectangle join" id="session-increment"><i class="fa-solid fa-arrow-up"></i></button>
+        <button class="rectangle" id="session-decrement"><i class="fa-solid fa-arrow-down"></i></button>
       </div>
 
       <div class="second-right">
-        <button class="circle" id="reset">
-          <i class="fa-solid fa-arrow-rotate-right"></i>
-        </button>
+        <button class="circle" id="reset"><i class="fa-solid fa-arrow-rotate-right"></i></button>
       </div>
 
       <div class="middle">
-        <button id="start_stop" class="fa-solid fa-play">
-        </button>
+        <button id="start_stop" class="fa-solid fa-play"></button>
       </div>
 
       <div class="second-left">
-        <button class="circle fa-solid fa-bell-slash" id="change-bell">
-          <audio src="/public/audio/bell_sound.MP3" id="beep"></audio></button>
+        <button class="circle fa-solid fa-bell-slash" id="change-bell"><audio src="/public/audio/bell_sound.MP3" id="beep"></audio></button>
       </div>
 
       <div class="left">
-        <button class="rectangle join" id="break-increment">
-          <i class="fa-solid fa-arrow-up"></i>
-        </button>
-        <button class="rectangle" id="break-decrement">
-          <i class="fa-solid fa-arrow-down"></i>
-        </button>
+        <button class="rectangle join" id="break-increment"><i class="fa-solid fa-arrow-up"></i></button>
+        <button class="rectangle" id="break-decrement"><i class="fa-solid fa-arrow-down"></i></button>
       </div>
+      
     </div>
   </div>
 
-  <footer>
-    Designed By: LEO emaXie
-  </footer>
+  <footer>Designed By: LEO emaXie</footer>
 
   <script src="main.js"></script>
 </body>
+
 </html>
