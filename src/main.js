@@ -20,10 +20,7 @@ let handlePlay = getElem('start_stop'),
 
 let elems = [breakDecrement, breakIncrement, sessionDecrement, sessionIncrement];
 
-sessionLabel.innerHTML = sessionValue;
-breakLabel.innerHTML = breakValue;
-
-let toggleClass = (elem, add, remove) => {
+function toggleClass(elem, add, remove) {
   let toggled = elem.classList.toggle(add);
   if (!toggled) elem.classList.add(remove);
 }
@@ -32,133 +29,151 @@ function modifyAttr(elem, action) {
   elem.forEach(x => action(x));
 }
 
+function sessionFormatter(value) {
+  sessionValue = value;
+  value < 10 ? hide.style.display = 'inline' : "";
+  sessionLabel.innerText = value;
+  timeLeft.innerText = value < 10 ? `0${value}:00` : `${value}:00`;
+}
+
+function breakFormatter(value) {
+  breakValue = value;
+  breakLabel.innerText = value;
+}
+
+function display(text, color) {
+  timerLabel.innerText = text;
+  timerLabel.style.color = color;
+}
+
+sessionFormatter(25);
+breakFormatter(5);
+
 /*** Main Timer Class ***/
 class Timer {
   constructor() {
     this.running = false;
+    this.audio = true;
     this.sessionTime = sessionValue * 60;
     this.breakTime = breakValue * 60;
   }
 
   play() {
     this.running = true;
-    timerLabel.innerHTML = 'Session Ongoing';
-    timerLabel.style.color = 'seagreen'
+    display('Session Ongoing', 'seagreen');
   }
 
   pause() {
     this.running = false;
-    timerLabel.innerHTML = 'Session Paused';
-    timerLabel.style.color = '#F8A145'
+    display('Session Paused', '#F8A145');
   }
 
   reset() {
     this.running = false;
     this.sessionTime = 1500;
     this.breakTime = 600;
-    timerLabel.innerHTML = 'Session Reset';
-    timerLabel.style.color = '#F8A145'
-    sessionLabel.innerHTML = "25"
-    breakLabel.innerHTML = "5"
-
+    display('Begin Session', '#F8A145');
+    beep.pause();
   }
 
-  runTimer() {
-    setInterval(() => {
-      var mins = Math.floor((this.sessionTime % 3600) / 60);
-      var secs = this.sessionTime % 60;
-      timeLeft.innerText = `${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+  run() {
+    let formatTime = time => {
+      var mins = Math.floor((time % 3600) / 60);
+      var secs = time % 60;
+      timeLeft.innerText = time == 3600 ? "60:00" : `${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
+    }
 
+    setInterval(() => {
       if (this.running) {
         this.sessionTime > 0 ? this.sessionTime -= 1 : "";
-        this.sessionTime == 5 ? beep.play() : "";
-        if (this.sessionTime < 1) {
-          var secs = this.breakTime % 60;
-          var mins = Math.floor((this.breakTime % 3600) / 60);
-          timeLeft.innerText = `${mins < 10 ? "0" + mins : mins}:${secs < 10 ? "0" + secs : secs}`;
-          this.breakTime >= 0 ? this.breakTime -= 1 : "";
-          timerLabel.innerHTML = 'Break Begins';
-          timerLabel.style.color = 'firebrick';
+        formatTime(this.sessionTime);
+        if (this.sessionTime == 0) {
+          this.audio ? beep.play() : beep.pause();
+          formatTime(this.breakTime);
+          display('Break Begins', 'firebrick');
+          this.breakTime > 0 ? this.breakTime -= 1 : "";
           if (this.breakTime == 0) {
-            timerLabel.innerHTML = 'Timer & Break Elapsed';
             timerLabel.style.fontStyle = 'italic';
             timerLabel.style.fontWeight = 'bolder';
-            timerLabel.style.color = '#E31C25';
+            display('Timer & Break Elapsed', '#E31C25');
+            this.running = false;
           }
         }
       }
     }, 1000)
   }
 
-  sessionIncrement() {
-    this.sessionTime <= 3600 ? this.sessionTime += 60 : timeLeft.innerText = "60:00"
+  enableAudio() {
+    this.audio = true;
   }
   
-  sessionDecrement() {
-    this.sessionTime > 0 ?
-      this.sessionTime -= 60 : "";
+  disableAudio() {
+    this.audio = false;
+  }
+  
+  increaseSession() {
+    this.sessionTime <= 3540 ? this.sessionTime += 60 : "";
   }
 
-  breakIncrement() {
+  decreaseSession() {
+    this.sessionTime >= 120 ? this.sessionTime -= 60 : "";
+  }
+
+  increaseBreak() {
     this.breakTime <= 3600 ? this.breakTime += 60 : "";
   }
-  
-  breakDecrement() {
-    this.breakTime > 0 ?
-      this.sessionTime -= 60 : "";
+
+  decreaseBreak() {
+    this.breakTime >= 120 ? this.breakTime -= 60 : "";
   }
 }
 
 let timer = new Timer();
 
 document.addEventListener('DOMContentLoaded', function() {
-  timer.runTimer();
+  timer.run();
 });
 
 handlePlay.addEventListener('click', function() {
   toggleClass(this, 'fa-play', 'fa-pause');
-  modifyAttr(elems, s => s.setAttribute("disabled", false));
+  modifyAttr(elems, s => s.setAttribute("disabled", true));
   this.classList.contains('fa-play') ? timer.pause() : timer.play();
 });
 
 reset.addEventListener('click', function() {
   timer.reset();
+  sessionFormatter(25);
+  breakFormatter(5);
   handlePlay.classList.add("fa-play");
   modifyAttr(elems, r => r.removeAttribute("disabled"));
+  hide.style.display = "none";
 });
 
 sessionDecrement.addEventListener('click', function() {
-  timer.sessionDecrement();
-  if (sessionValue > 1) {
-    let decrementValue = sessionValue -= 1;
-    sessionLabel.innerHTML = decrementValue;
-    //displays zeros to single digits
-    if (decrementValue < 10) hide.style.display = 'inline';
-  }
-  else sessionLabel;
+  timer.decreaseSession();
+  sessionValue > 1 ? sessionValue -= 1 : "";
+  sessionFormatter(sessionValue);
 });
 
 sessionIncrement.addEventListener('click', function() {
-  timer.sessionIncrement()
-  if (sessionValue >= 0 && sessionValue < 60) {
-    let incrementValue = sessionValue += 1;
-    sessionLabel.innerHTML = incrementValue;
-    if (incrementValue < 10) hide.style.display = 'inline';
-
-    if (sessionValue >= 10) hide.style.display = 'none';
-  } else sessionLabel;
+  timer.increaseSession();
+  sessionValue >= 0 && sessionValue < 60 ? sessionValue += 1 : "";
+  sessionFormatter(sessionValue);
 })
 
 breakDecrement.addEventListener('click', function() {
-  timer.breakDecrement()
-  breakValue > 1 ? breakLabel.innerHTML = breakValue -= 1 : breakValue;
+  breakValue > 1 ? breakValue -= 1 : "";
+  timer.decreaseBreak();
+  breakFormatter(breakValue);
 });
 
 breakIncrement.addEventListener('click', function() {
-  timer.breakIncrement()
-  breakValue > 0 && breakValue < 60 ? breakLabel.innerHTML = breakValue += 1 : breakValue;
+  breakValue > 0 && breakValue < 60 ? breakValue += 1 : ""
+  timer.increaseBreak();
+  breakFormatter(breakValue);
 });
 
 changeBell.addEventListener('click', function() {
   toggleClass(this, 'fa-bell-slash', 'fa-bell');
+  this.classList.contains('fa-bell-slash') ? timer.enableAudio() : "";
 });
